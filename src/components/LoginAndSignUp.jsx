@@ -15,6 +15,7 @@ function LoginAndSignUp() {
         setData({ userId: '', userName: '', emailId: '', password: '' });
         setShowSignUp(!showSignUp);
     }
+    console.log(role);
     return (
         <div className="bg-info d-flex justify-content-center align-items-center vh-100">
             <div style={{ width: '30rem' }} className="card p-3 rounded-4 shadow-lg">
@@ -40,15 +41,15 @@ function LoginAndSignUp() {
                     {
                         showSignUp &&
                         <Dropdown>
-                            <Dropdown.Toggle className='form-control text-white m-1 d-inline-block' variant="info">
+                            <Dropdown.Toggle className='text-white m-1 d-inline-block w-100' variant="info">
                             {role}
                             </Dropdown.Toggle>
                   
                         <Dropdown.Menu className='w-100'>
-                        <Dropdown.Item href="#/action-1" disabled>Select the Below User Role</Dropdown.Item>
-                          <Dropdown.Item href="#/action-1" name='Enginner' onClick={(e)=>setRole(e.target.name)}>Enginner <FaUserAlt size={13} style={{ color: 'blue' }} /></Dropdown.Item>
-                          <Dropdown.Item href="#/action-2" name='Admin' onClick={(e)=>setRole(e.target.name)}>Admin <FaUserAlt size={13} style={{ color: 'blue' }} /></Dropdown.Item>
-                          <Dropdown.Item href="#/action-3" name='Support' onClick={(e)=>setRole(e.target.name)}>Support <FaUserAlt size={13} style={{ color: 'blue' }} /></Dropdown.Item>
+                        <Dropdown.Item  eventKey="1" disabled>Select the Below User Role</Dropdown.Item>
+                          <Dropdown.Item  eventKey="2" name='Enginner' onClick={(e)=>setRole(e.target.name)}>Enginner <FaUserAlt size={13} style={{ color: 'blue' }} /></Dropdown.Item>
+                          <Dropdown.Item  eventKey="3" name='Admin' onClick={(e)=>setRole(e.target.name)}>Admin <FaUserAlt size={13} style={{ color: 'blue' }} /></Dropdown.Item>
+                          <Dropdown.Item  eventKey="4" name='Support' onClick={(e)=>setRole(e.target.name)}>Support <FaUserAlt size={13} style={{ color: 'blue' }} /></Dropdown.Item>
                         </Dropdown.Menu>
                       </Dropdown>
                     }
