@@ -1,0 +1,11 @@
+#error{
+    margin-left:'9px';
+    font-size:'90%';
+    position:'absolute';
+    margin-top:'6vh';
+    color:'red';
+}
+
+.myc{
+    background-color: red;
+}
