@@ -1,3 +1,4 @@
+import React from "react";
 import { useState } from "react";
 import { ForgotPasword } from '../schemas/ForgotPassword';
 import { FaUserAlt } from "react-icons/all.js";
