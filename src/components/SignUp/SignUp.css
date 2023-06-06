@@ -1,0 +1,19 @@
+#error{
+    margin-left:'9px';
+    font-size:'90%';
+    position:'absolute';
+    margin-top:'6vh';
+    color:'red';
+}
+
+#SignUpComponent{
+    background-image: url('../../assets/crm.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+#cardcontainer{
+    background:rgba(0,0,0,0.3);
+    backdrop-filter: blur(2px);
+    border:0.5px solid aqua
+}
