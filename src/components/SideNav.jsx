@@ -4,7 +4,6 @@ import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import CssBaseline from '@mui/material/CssBaseline';
-import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import PeopleIcon from '@mui/icons-material/People';
 import ListItem from '@mui/material/ListItem';
@@ -18,6 +17,8 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import ManageHistoryIcon from '@mui/icons-material/ManageHistory';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import { useDispatch } from 'react-redux';
+import { logout } from '../store/slices/loginSlice';
 
 const drawerWidth = 240;
 
@@ -64,11 +65,11 @@ export default function SideNav() {
     const theme = useTheme();
     const opend = useSelector(state =>state.open);
     const navigate = useNavigate();
-
-    // const handleDrawerClose = () => {
-    //     setOpen(false);
-    // };
-
+    const dispatch = useDispatch();
+    const handleLogout = ()=>{
+        dispatch(logout());
+        navigate('/login');
+    }
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
@@ -179,7 +180,7 @@ export default function SideNav() {
                                 <ListItemText primary='Ticket Status' sx={{ opacity: open ? 1 : 0 }} />
                             </ListItemButton>
                         </ListItem>
-                        <ListItem key='Logout' disablePadding sx={{ display: 'block',mt:'33rem' }} onClick={()=>{navigate(`/Logout`)}}>
+                        <ListItem key='Logout' disablePadding sx={{ display: 'block',mt:'33rem' }} onClick={handleLogout}>
                             <ListItemButton
                                 sx={{
                                     minHeight: 48,

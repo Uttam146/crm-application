@@ -1,13 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
+import { Paper, Table, TableBody, TableContainer, TableCell, Typography } from '@mui/material';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import Button from "@mui/material/Button";
@@ -18,11 +13,12 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import Swal from "sweetalert2";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
-import { fetchAllUsers, deleteUserById } from "../api/fetchUsers";
-import {fetchAllTicket}  from '../api/ticketApi';
+import { fetchAllUsers, deleteUserById } from "../../api/usersApi";
 import Modal from '@mui/material/Modal';
-import AddTicket from './AddTicket';
-import EditTicket from './EditTicket';
+import AddUser from './AddUser';
+import EditUser from './EditUser';
+import useLocalStorage from '../../customHook/useLocalStorage';
+import { userType } from '../../constants/constant';
 
 const style = {
     position: 'absolute',
@@ -33,28 +29,28 @@ const style = {
     bgcolor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,
-    p: 4,
+    p: 4
 };
 
 
-export default function TicketList() {
+export default function UserList() {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [rows, setRows] = useState([]);
     const [open, setOpen] = useState(false);
     const [edit, setEdit] = useState(false);
     const handleEdit = () => setEdit(true);
-    const handleEditClose = () => setEdit(false); 
+    const handleEditClose = () => setEdit(false);
     const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false); 
-    const [editData,setEditData] = useState({ticketId:''});
+    const handleClose = () => setOpen(false);
+    const [editData, setEditData] = useState({ id: '' });
+    const localstorage = useLocalStorage();
 
     useEffect(() => {
-        getTicket();
+        getUsers();
     }, []);
-
-    const getTicket = async () => {
-        fetchAllTicket()
+    const getUsers = async () => {
+        fetchAllUsers(localstorage.userType)
             .then((res) => {
                 setRows(res.data);
             })
@@ -82,32 +78,24 @@ export default function TicketList() {
         deleteUserById({ id })
             .then((res) => {
                 Swal.fire("Deleted!", `User ${userid} has been deleted.`, "success");
-                getTicket();
+                getUsers();
             })
             .catch((err) => {
                 Swal.fire("ERROR!", `OOPS Something went wrong`, "warning");
                 console.log(err);
             })
     };
-    const editTicket = async (id) => {
-        setEditData({ticketId:id});
+    const editUser = async (id) => {
+        setEditData(id);
         handleEdit();
-        // deleteUserById({ id })
-        //     .then((res) => {
-        //         Swal.fire("Deleted!", `User ${userid} has been deleted.`, "success");
-        //         getTicket();
-        //     })
-        //     .catch((err) => {
-        //         Swal.fire("ERROR!", `OOPS Something went wrong`, "warning");
-        //         console.log(err);
-        //     })
     };
+
     const filterData = (v) => {
         if (v) {
             setRows([v]);
         } else {
             setRows([]);
-            getTicket();
+            getUsers();
         }
     };
 
@@ -130,7 +118,7 @@ export default function TicketList() {
                     aria-describedby="modal-modal-description"
                 >
                     <Box sx={style}>
-                        <AddTicket closeEvent={handleClose} getTicket={getTicket}/>
+                        <AddUser closeEvent={handleClose} getUsers={getUsers} />
                     </Box>
                 </Modal>
                 <Modal
@@ -139,7 +127,16 @@ export default function TicketList() {
                     aria-describedby="modal-modal-description"
                 >
                     <Box sx={style}>
-                        <EditTicket closeEvent={handleEditClose} getTicket={getTicket} editData={editData}/>
+                        <EditUser closeEvent={handleEditClose} getUsers={getUsers} editData={editData} />
+                    </Box>
+                </Modal>
+                <Modal
+                    open={open}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                >
+                    <Box sx={style}>
+                        <AddUser closeEvent={handleClose} getUsers={getUsers} />
                     </Box>
                 </Modal>
             </div>
@@ -150,30 +147,35 @@ export default function TicketList() {
                     component="div"
                     sx={{ padding: "20px" }}
                 >
-                    Ticket List
+                    Users List
                 </Typography>
                 <Divider />
                 <Box height={10} />
-                <Stack direction="row" spacing={2} className="my-2 mb-2">
-                    {/* <Autocomplete
+                <Stack direction="row" spacing={2} className="my-2 mb-2 mx-4">
+                    <Autocomplete
                         disablePortal
                         id="combo-box-demo"
                         options={rows}
                         sx={{ width: 300 }}
                         onChange={(e, v) => filterData(v)}
-                        getOptionLabel={(rows) => rows.ticketId || ""}
+                        getOptionLabel={(rows) => rows.userid || ""}
                         renderInput={(params) => (
-                            <TextField {...params} size="small" label="Search TicketId" />
+                            <TextField {...params} size="small" label="Search UserId" />
                         )}
-                    /> */}
+                    />
+
                     <Typography
                         variant="h6"
                         component="div"
                         sx={{ flexGrow: 1 }}
                     ></Typography>
-                    <Button variant="contained" endIcon={<AddCircleIcon />} onClick={handleOpen}>
-                        Add
-                    </Button>
+                    {
+                        localstorage.userType === userType.customer && <Button variant="contained" endIcon={<AddCircleIcon />} onClick={handleOpen}>
+                            Add
+                        </Button>
+                    }
+
+
                 </Stack>
                 <Box height={10} />
                 <TableContainer sx={{ maxHeight: 440 }}>
@@ -184,104 +186,91 @@ export default function TicketList() {
                                     align='left'
                                     style={{ minWidth: '100px' }}
                                 >
-                                    Ticket Id
+                                    Name
                                 </TableCell>
                                 <TableCell
                                     align='left'
                                     style={{ minWidth: '100px' }}
                                 >
-                                    Title
+                                    Email Id
                                 </TableCell>
                                 <TableCell
                                     align='left'
                                     style={{ minWidth: '100px' }}
                                 >
-                                    Description
+                                    UserType
                                 </TableCell>
                                 <TableCell
                                     align='left'
                                     style={{ minWidth: '100px' }}
                                 >
-                                    Requested By
+                                    UserStatus
                                 </TableCell>
                                 <TableCell
                                     align='left'
                                     style={{ minWidth: '100px' }}
                                 >
-                                    Priority
+                                    Created At
                                 </TableCell>
-                                <TableCell
-                                    align='left'
-                                    style={{ minWidth: '100px' }}
-                                >
-                                    Assignee To
-                                </TableCell>
-                                <TableCell
-                                    align='left'
-                                    style={{ minWidth: '100px' }}
-                                >
-                                    Status
-                                </TableCell>
-                                <TableCell
-                                    align='left'
-                                    style={{ minWidth: '100px' }}
-                                >
-                                    Action
-                                </TableCell>
+                                {
+                                    localstorage.userType !== userType.customer ?
+                                        <TableCell
+                                            align='left'
+                                            style={{ minWidth: '100px' }}
+                                        >
+                                            Action
+                                        </TableCell> : null
+                                }
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {rows && rows
+                            {rows
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row) => {
                                     return (
                                         <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
 
                                             <TableCell align='left'>
-                                                {row.ticketId}
+                                                {row.userid}
                                             </TableCell>
                                             <TableCell align='left'>
-                                                {row.title}
+                                                {row.email}
                                             </TableCell>
                                             <TableCell align='left'>
-                                                {row.description}
+                                                {row.usertype}
                                             </TableCell>
                                             <TableCell align='left'>
-                                                {row.requestedBy}
+                                                {row.userstatus}
                                             </TableCell>
                                             <TableCell align='left'>
-                                                {row.priority}
+                                                {row.createdat}
                                             </TableCell>
-                                            <TableCell align='left'>
-                                                {row.assignedTo}
-                                            </TableCell>
-                                            <TableCell align='left'>
-                                                {row.status}
-                                            </TableCell>
-                                            <TableCell align="left">
-                                                <Stack spacing={2} direction="row">
-                                                    <EditIcon
-                                                        style={{
-                                                            fontSize: "20px",
-                                                            color: "blue",
-                                                            cursor: "pointer",
-                                                        }}
-                                                        className="cursor-pointer"
-                                                    onClick={() => editTicket(row.ticketId)}
-                                                    />
-                                                    <DeleteIcon
-                                                        style={{
-                                                            fontSize: "20px",
-                                                            color: "darkred",
-                                                            cursor: "pointer",
-                                                        }}
-                                                        onClick={() => {
-                                                            deleteUser(row.id, row.userid);
-                                                        }}
-                                                    />
-                                                </Stack>
-                                            </TableCell>
-
+                                            {
+                                                localstorage.userType !== userType.customer ?
+                                                    <TableCell align="left">
+                                                        <Stack spacing={2} direction="row">
+                                                            <EditIcon
+                                                                style={{
+                                                                    fontSize: "20px",
+                                                                    color: "blue",
+                                                                    cursor: "pointer",
+                                                                }}
+                                                                className="cursor-pointer"
+                                                                onClick={() => editUser(row.id)}
+                                                            />
+                                                            <DeleteIcon
+                                                                style={{
+                                                                    fontSize: "20px",
+                                                                    color: "darkred",
+                                                                    cursor: "pointer",
+                                                                }}
+                                                                onClick={() => {
+                                                                    deleteUser(row.id, row.userid);
+                                                                }}
+                                                            />
+                                                        </Stack>
+                                                    </TableCell> : null
+                                            }
                                         </TableRow>
                                     );
                                 })}

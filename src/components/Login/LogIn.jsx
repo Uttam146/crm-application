@@ -1,19 +1,20 @@
-import React from "react";
-import { useEffect, useState } from "react";
-import { useDispatch,useSelector } from 'react-redux';
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from 'react-redux';
 import { saveLogin } from '../../store/slices/loginSlice';
 import { LogInschema } from '../../schemas/LogInSchema';
 import { useFormik } from "formik";
 import Button from 'react-bootstrap/Button';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate,useLocation } from "react-router-dom";
 import { SignInForm } from "../../api/userAuth";
 import { SwalAuth } from "../Swal/SwalAuth";
 import './LogIn.css';
 
-
 function LogIn() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const data = useLocation().search.split('?')[1];
+  const loginDetails = useSelector(state => state.login);
+
   const onSubmit = async (values, actions) => {
     const data = {
       email: values.emailId,
@@ -22,11 +23,11 @@ function LogIn() {
     SignInForm(data)
       .then((res) => {
         dispatch(saveLogin(res.data));
-        SwalAuth('success','Log In Sucessfull',2000,'bottom-end');
+        SwalAuth('success', 'Log In Sucessfull', 2000, 'bottom-end');
         navigate('/home');
       })
       .catch((err) => {
-        SwalAuth('error',err.response.data.message,3000,'top-end');
+        SwalAuth('error', err.response.data.message, 3000, 'top-end');
       })
   };
 
@@ -45,40 +46,32 @@ function LogIn() {
     onSubmit,
   });
 
-  // useEffect(() => {
-  //   const userType = localStorage.getItem("userType");
-  //   const token = localStorage.getItem("token");
+  useEffect(()=>{
+    if(data){
+        axios.post(`http://localhost:8000/crm/api/v1/auth/${data}`)
+        .then((res)=> dispatch(saveLogin(res.data)))
+        .catch((err)=> console.log(err));
+      }
+  },[])
 
-  //   if (!token || !userType) {
-  //     return;
-  //   }
+  if (loginDetails.userType != '' && loginDetails.accessToken != '' && loginDetails.userStatus != 'BLOCKED') {
+    return <Navigate to='/home' />
+  }
 
-
-  //   if (userType === "ENGINEER") {
-  //     window.location.href = "/engineer";
-  //   }
-  //   else if (userType === "CUSTOMER") {
-  //     window.location.href = "/customer";
-  //   } else {
-  //     window.location.href = "/admin";
-
-  //   }
-
-  // })
   return (
     <div id='LoginComponent' className="d-flex  flex-column justify-content-center align-items-center vh-100 ">
       <div style={{ width: '30rem', marginTop: '4vh' }} id='cardcontainer' className="card p-3 rounded-4 shadow-lg">
-        <h4 style={{ textAlign: 'center',color:'white'}}>Log In</h4>
+        <h4 style={{ textAlign: 'center', color: 'white' }}>Log In</h4>
 
         <form onSubmit={handleSubmit}>
           <div className="input-group">
             <input className='form-control my-3  mx-1' type='text' name='emailId' value={values.emailId} onChange={(e) => handleChange(e)} placeholder="EmailId" />
-            {errors.emailId && touched.emailId && <p style={{ marginLeft: '9px', fontSize: '90%', position: 'absolute', marginTop: '6vh', color: 'red' }} className="error">{errors.emailId}</p>}
+            {errors.emailId && touched.emailId && <p style={{ marginLeft: '9px', fontSize: '90%', position: 'absolute', marginTop: '5vh', color: 'red' }} className="error">{errors.emailId}</p>}
           </div>
 
           <div className="input-group">
             <input className='form-control my-3  mx-1' type='password' name='password' value={values.password} onChange={(e) => handleChange(e)} placeholder="Password" />
-            {errors.password && touched.password && <p style={{ marginLeft: '9px', fontSize: '90%', position: 'absolute', marginTop: '6vh', color: 'red' }} className="error">{errors.password}</p>}
+            {errors.password && touched.password && <p style={{ marginLeft: '9px', fontSize: '90%', position: 'absolute', marginTop: '5vh', color: 'red' }} className="error">{errors.password}</p>}
           </div>
           <div className="d-grid gap-2 my-3">
             <Button variant="primary" size="md" type='submit'>

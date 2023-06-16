@@ -1,7 +1,8 @@
-import { fetchAllUsers } from "../api/fetchUsers";
-import { useState,useEffect } from "react";
+import React, { useState,useEffect } from "react";
+import { fetchAllUsers } from "../api/usersApi";
+
 const useUser = () => {
-    const [userData, setUserData] = useState([]);
+    const [getUsers, setGetUsers] = useState([]);
     useEffect(() => {
       fetchAllUsers()
       .then((res) => {
@@ -12,7 +13,7 @@ const useUser = () => {
       })
     }, []);
   
-    return [userData];
+    return [getUsers,setGetUsers];
   };
 
   export default useUser;

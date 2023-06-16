@@ -3,7 +3,6 @@ import loginSlice from "./slices/loginSlice";
 import openSlice from "./slices/openSlice";
 import calendarSlice from "./slices/calendarSlice";
 import storage from 'redux-persist/lib/storage';
-// import storageSession from 'reduxjs-toolkit-persist/lib/storage/session'
 import { combineReducers } from 'redux';
 import { persistReducer } from 'redux-persist';
 import thunk from 'redux-thunk';

@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { IconButton, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import Grid from '@mui/material/Grid';
@@ -5,32 +6,37 @@ import CloseIcon from '@mui/icons-material/Close'
 import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
-import { useState } from "react";
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
-import { saveTicket } from '../api/ticketApi'
+import { saveTicket } from '../../api/ticketApi'
 import Swal from "sweetalert2";
 import FormControl from '@mui/material/FormControl';
+import useLocalStorage from "../../customHook/useLocalStorage";
 
-export default function AddTicket({ closeEvent, getTicket }) {
-    const [ticket, setTicket] = useState({ title: '', priority: '', description: ''});
+export default function AddTicket({ closeEvent ,getTicket}) {
+    const localStorage = useLocalStorage();
+    const [ticket, setTicket] = useState({ title: '', priority: '', description: '' });
+
     const handleChange = (event) => {
         setTicket({ ...ticket, [event.target.name]: event.target.value });
     };
+
     const createTicket = () => {
         const data = {
-             title: ticket.title,
-             priority: ticket.title,
-             description: ticket.description,
-             userId:'Uttam',
+            title: ticket.title,
+            priority: ticket.title,
+            description: ticket.description,
+            userId: localStorage.userId,
         }
         saveTicket(data)
             .then((res) => {
                 closeEvent();
-                Swal.fire("Success", `User has been created Successfully`, "success");
+                Swal.fire("Success", `Ticket has been created Successfully`, "success");
                 getTicket();
             })
             .catch((err) => {
+                closeEvent();
+                Swal.fire("Warning", `Something Went Wrong`, "warning");
                 console.log(err);
             })
     };
@@ -48,7 +54,7 @@ export default function AddTicket({ closeEvent, getTicket }) {
             <Box height={20} />
             <Grid container spacing={2}>
                 <Grid item xs={12}>
-                    <TextField id="outlined-basic" value={ticket.title} name='title' label="Title"  variant="outlined" sx={{ minWidth: '100%' }} onChange={handleChange} />
+                    <TextField id="outlined-basic" value={ticket.title} name='title' label="Title" variant="outlined" sx={{ minWidth: '100%' }} onChange={handleChange} />
                 </Grid>
                 <Grid item xs={12}>
                     <FormControl fullWidth>
@@ -70,8 +76,8 @@ export default function AddTicket({ closeEvent, getTicket }) {
                 </Grid>
                 <Grid item xs={12}>
                     <TextField id="outlined-basic" value={ticket.description} name='description' label="Description" size='small' variant="outlined" sx={{ minWidth: '100%' }} onChange={handleChange}
-                      multiline
-                      rows={4} />
+                        multiline
+                        rows={4} />
                 </Grid>
                 <Grid item xs={12}>
                     <Typography variant="h5" align='center'>

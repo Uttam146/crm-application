@@ -1,7 +1,7 @@
-import * as React from 'react';
+import React from "react";
 import { styled, alpha } from '@mui/material/styles';
 import MuiAppBar from '@mui/material/AppBar';
-import { useSelector,useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
@@ -68,7 +68,7 @@ export default function NavBar() {
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   // const open = useSelector(state => state.open);
   const dispatch = useDispatch();
-  const handleOpen = ()=>{
+  const handleOpen = () => {
     dispatch(saveOpen());
   }
 
@@ -168,7 +168,7 @@ export default function NavBar() {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="fixed" sx={{backgroundColor:'white'}}>
+      <AppBar position="fixed" sx={{ backgroundColor: 'white' }}>
         <Toolbar>
           <IconButton
             size="large"
@@ -189,9 +189,9 @@ export default function NavBar() {
           >
             Cluster
           </Typography>
-          <Search sx={{color:'black'}}>
-            <SearchIconWrapper sx={{color:'black'}}>
-              <SearchIcon sx={{color:'black'}}/>
+          <Search sx={{ color: 'black' }}>
+            <SearchIconWrapper sx={{ color: 'black' }}>
+              <SearchIcon sx={{ color: 'black' }} />
             </SearchIconWrapper>
             <StyledInputBase
               placeholder="Search…"
@@ -201,7 +201,7 @@ export default function NavBar() {
           </Search>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-            <IconButton size="large" aria-label="show 4 new mails"  color='black'>
+            <IconButton size="large" aria-label="show 4 new mails" color='black'>
               <Badge badgeContent={4} color="error">
                 <MailIcon />
               </Badge>

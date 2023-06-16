@@ -1,14 +1,12 @@
+import React,{ useState } from "react";
 import { IconButton, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import Grid from '@mui/material/Grid';
 import CloseIcon from '@mui/icons-material/Close'
 import TextField from '@mui/material/TextField';
-import InputLabel from '@mui/material/InputLabel';
-import Select from '@mui/material/Select';
-import { useEffect, useState } from "react";
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
-import { editUserById } from '../api/fetchUsers'
+import { editUserById } from '../../api/usersApi';
 import Swal from "sweetalert2";
 
 export default function EditUser({ closeEvent, getUsers, editData }) {
@@ -46,15 +44,6 @@ export default function EditUser({ closeEvent, getUsers, editData }) {
       <Box height={20} />
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          {/* <Select
-          value={signup.role}
-          onChange={handleChange}
-          displayEmpty
-          inputProps={{ 'aria-label': 'Without label' }}
-          size='small'
-          sx={{minWidth:'100%'}}
-          name='role'
-        > */}
           <TextField
             value={status}
             onChange={(e) => setStatus(e.target.value)}
@@ -69,8 +58,8 @@ export default function EditUser({ closeEvent, getUsers, editData }) {
             <MenuItem key={2} value="APPROVED">
               APPROVED
             </MenuItem>
-            <MenuItem key={3} value="REJECTED">
-              REJECTED
+            <MenuItem key={3} value="BLOCKED">
+              BLOCKED
             </MenuItem>
           </TextField>
         </Grid>

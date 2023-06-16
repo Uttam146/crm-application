@@ -1,3 +1,4 @@
+import React from "react";
 import Swal from "sweetalert2";
 
 export function SwalAuth(icon,title,time,position){

@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import SideNav from './SideNav'
 import Box from '@mui/material/Box';
-import NavBar from './NavBar';
 import { Grid } from '@mui/material';
 import Timeline from '@mui/lab/Timeline';
 import TimelineItem from '@mui/lab/TimelineItem';
@@ -17,7 +15,9 @@ import TextField from '@mui/material/TextField';
 import Stack from "@mui/material/Stack";
 import Button from '@mui/material/Button';
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { getHistory } from '../api/historyApi';
+import { getHistory } from '../../api/historyApi';
+import withMenu from '../../HOC/Menu';
+
 const theme = createTheme({
     palette: {
         color1: {
@@ -29,7 +29,7 @@ const theme = createTheme({
     }
 });
 
-export default function TicketHistory() {
+function TicketHistory() {
     const [showHistory, setShowHistory] = useState('none');
     const [ticketId, setTicketId] = useState('');
     const [ticketHistory, setTicketHistory] = useState([]);
@@ -50,10 +50,6 @@ export default function TicketHistory() {
     return (
         <>
             <ThemeProvider theme={theme}>
-                <NavBar />
-                <Box sx={{ display: 'flex', backgroundColor: '#f7f7f7' }}>
-                    <SideNav />
-                    <Box component='main' sx={{ flexGrow: 1, pt: 12, pl: 20, maxWidth: '105rem', minHeight: "100vh" }}>
                         <Grid container spacing={1} sx={{ pt: '4rem' }}>
                             <Paper sx={{ width: '100%', overflow: 'hidden' }}>
                                 <Typography
@@ -83,7 +79,7 @@ export default function TicketHistory() {
                                 <Grid container spacing={1} sx={{ pt: '4rem' }} style={{ display: showHistory }}>
                                     <Timeline position="alternate">
                                         {
-                                            ticketHistory && ticketHistory.map((history) => {
+                                            ticketHistory.length > 0 ? ticketHistory.map((history) => {
                                                 if (history.status == 'proposed') {
                                                     return (
                                                         <TimelineItem>
@@ -181,84 +177,24 @@ export default function TicketHistory() {
                                                     )
                                                 }
                                             })
+                                            : <Typography
+                                            gutterBottom
+                                            variant="h6"
+                                            component="div"
+                                            sx={{ padding: "20px",textAlign:'center' }}
+                                        >
+                                            No Data Found
+                                        </Typography>
                                         }
-                                        {/* <TimelineItem>
-                                            <TimelineOppositeContent
-                                                sx={{ m: 'auto 0' }}
-                                                align="right"
-                                                variant="body2"
-                                                color="grey"
-                                            >
-                                                9:30 am
-                                            </TimelineOppositeContent>
-                                            <TimelineSeparator>
-                                                <TimelineDot color="grey" />
-                                                <TimelineConnector />
-                                            </TimelineSeparator>
-                                            <TimelineContent sx={{ py: '12px', px: 2 }}>
-                                                <Typography variant="h6" component="span">
-                                                    Proposed
-                                                </Typography>
-                                                <Typography>Ticket Title</Typography>
-                                            </TimelineContent>
-                                        </TimelineItem>
-                                        <TimelineItem>
-                                            <TimelineOppositeContent
-                                                sx={{ m: 'auto 0' }}
-                                                variant="body2"
-                                                color="color1"
-                                            >
-                                                10:00 am
-                                            </TimelineOppositeContent>
-                                            <TimelineSeparator>
-                                                <TimelineConnector />
-                                                <TimelineDot color="color1" />
-                                            </TimelineSeparator>
-                                            <TimelineContent sx={{ py: '12px', px: 2 }}>
-                                                <Typography variant="h6" component="span">
-                                                    Active
-                                                </Typography>
-                                                <Typography>Ticket Actve by</Typography>
-                                            </TimelineContent>
-                                        </TimelineItem>
-                                        <TimelineItem>
-                                            <TimelineSeparator>
-                                                <TimelineConnector />
-                                                <TimelineDot color="color2" />
-                                                <TimelineConnector sx={{ bgcolor: 'secondary.main' }} />
-                                            </TimelineSeparator>
-                                            <TimelineContent sx={{ py: '12px', px: 2 }}>
-                                                <Typography variant="h6" component="span">
-                                                    Resolved
-                                                </Typography>
-                                                <Typography>Resolved By</Typography>
-                                            </TimelineContent>
-                                        </TimelineItem>
-                                        <TimelineItem>
-                                            <TimelineSeparator>
-                                                <TimelineConnector sx={{ bgcolor: 'secondary.main' }} />
-                                                <TimelineDot color="success">
-                                                </TimelineDot>
-                                                <TimelineConnector />
-                                            </TimelineSeparator>
-                                            <TimelineContent sx={{ py: '12px', px: 2 }}>
-                                                <Typography variant="h6" component="span">
-                                                    Closed
-                                                </Typography>
-                                                <Typography>Closed By</Typography>
-                                            </TimelineContent>
-                                        </TimelineItem> */}
+                                        
                                     </Timeline>
 
                                 </Grid>
 
                             </Paper>
                         </Grid>
-
-
-                    </Box>
-                </Box>
             </ThemeProvider>
         </>
     )
 }
+ export default withMenu(TicketHistory);

@@ -1,17 +1,19 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { FaUserAlt } from "react-icons/all.js";
-import Dropdown from 'react-bootstrap/Dropdown';
+import { useSelector } from 'react-redux';
 import { SignUpschema } from '../../schemas/SignUpSchema';
 import { SignUpForm } from '../../api/userAuth';
 import { useFormik } from "formik";
-import Button from 'react-bootstrap/Button';
-import { useNavigate } from "react-router-dom";
+import { Dropdown, Button } from 'react-bootstrap';
+import { useNavigate, Navigate } from "react-router-dom";
 import { SwalAuth } from '../Swal/SwalAuth';
+import { userStatus } from "../../constants/constant";
 import './SignUp.css';
 
 function SignUp() {
+
   const navigate = useNavigate();
+  const loginDetails = useSelector(state => state.login);
   const [role, setRole] = useState('SELECT ROLE');
 
   const onSubmit = async (values, actions) => {
@@ -22,30 +24,33 @@ function SignUp() {
       userType: role,
       password: values.password
     };
+
     SignUpForm(data)
       .then((res) => {
-        SwalAuth('success', 'SignUp Successfull', 1000,'top-end');
+        SwalAuth('success', 'SignUp Successfull', 1000, 'top-end');
         navigate('/login');
       })
       .catch((err) => {
-        SwalAuth('error', err.response.data.message, 4000,'top-end');
+        SwalAuth('error', err.response.data.message, 4000, 'top-end');
       })
   };
 
-  const {
-    values, errors, touched, handleChange, handleSubmit } = useFormik({
-      initialValues: {
-        userId: '',
-        userName: '',
-        emailId: "",
-        password: "",
-      },
-      validationSchema: SignUpschema,
-      onSubmit,
-    });
+  const { values, errors, touched, handleChange, handleSubmit } = useFormik({
+    initialValues: {
+      userId: '',
+      userName: '',
+      emailId: "",
+      password: "",
+    },
+    validationSchema: SignUpschema,
+    onSubmit,
+  });
+
+  if (loginDetails.userType != '' && loginDetails.accessToken != '' && loginDetails.userStatus != userStatus.BLOCKED) {
+    return <Navigate to='/home' />
+  }
 
   return (
-
     <div id='SignUpComponent' className="d-flex flex-column justify-content-center align-items-center vh-100">
       <div style={{ width: '30rem', marginTop: '6vh' }} id='cardcontainer' className="card p-3 rounded-4 shadow-lg">
         <h3 style={{ textAlign: 'center', color: 'white' }}>Sign Up</h3>
@@ -53,22 +58,22 @@ function SignUp() {
         <form onSubmit={handleSubmit}>
           <div className="input-group">
             <input className='form-control my-3  mx-1' type='text' name='userId' value={values.userId} onChange={handleChange} placeholder="UserID" />
-            {errors.userId && touched.userId && <p style={{ marginLeft: '9px', fontSize: '90%', position: 'absolute', marginTop: '6vh', color: 'red' }} className="error">{errors.userId}</p>}
+            {errors.userId && touched.userId && <p style={{ marginLeft: '9px', fontSize: '90%', position: 'absolute', marginTop: '5vh', color: 'red' }} className="error">{errors.userId}</p>}
           </div>
 
           <div className="input-group">
             <input className='form-control my-3  mx-1' type='text' name='userName' value={values.userName} onChange={(e) => handleChange(e)} placeholder="UserName" />
-            {errors.userName && touched.userName && <p style={{ marginLeft: '9px', fontSize: '90%', position: 'absolute', marginTop: '6vh', color: 'red' }} className="error">{errors.userName}</p>}
+            {errors.userName && touched.userName && <p style={{ marginLeft: '9px', fontSize: '90%', position: 'absolute', marginTop: '5vh', color: 'red' }} className="error">{errors.userName}</p>}
           </div>
 
           <div className="input-group">
             <input className='form-control my-3  mx-1' type='text' name='emailId' value={values.emailId} onChange={(e) => handleChange(e)} placeholder="EmailID" />
-            {errors.emailId && touched.emailId && <p style={{ marginLeft: '9px', fontSize: '90%', position: 'absolute', marginTop: '6vh', color: 'red' }} className="error">{errors.emailId}</p>}
+            {errors.emailId && touched.emailId && <p style={{ marginLeft: '9px', fontSize: '90%', position: 'absolute', marginTop: '5vh', color: 'red' }} className="error">{errors.emailId}</p>}
           </div>
 
           <div className="input-group">
             <input className='form-control my-3  mx-1' aria-describedby="basic-addon2" type='password' name='password' value={values.password} onChange={(e) => handleChange(e)} placeholder="Password" />
-            {errors.password && touched.password && <p style={{ marginLeft: '9px', fontSize: '90%', position: 'absolute', marginTop: '6vh', color: 'red' }} className="error">{errors.password}</p>}
+            {errors.password && touched.password && <p style={{ marginLeft: '9px', fontSize: '90%', position: 'absolute', marginTop: '5vh', color: 'red' }} className="error">{errors.password}</p>}
           </div>
 
           <Dropdown>

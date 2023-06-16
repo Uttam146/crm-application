@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { IconButton, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import Grid from '@mui/material/Grid';
@@ -5,34 +6,37 @@ import CloseIcon from '@mui/icons-material/Close'
 import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
-import { useEffect, useState } from "react";
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
-import { editTicketyId } from '../api/ticketApi';
+import { editTicketyId } from '../../api/ticketApi';
 import Swal from "sweetalert2";
 import FormControl from '@mui/material/FormControl';
+import useLocalStorage from "../../customHook/useLocalStorage";
 
 export default function EditTicket({ closeEvent, getTicket, editData }) {
+  const localStorage = useLocalStorage();
   const [ticket, setTicket] = useState({ status: '', remark: '' });
-  console.log(editData);
 
   const handleChange = (event) => {
-    setTicket({...ticket,[event.target.name]: event.target.value});
+    setTicket({ ...ticket, [event.target.name]: event.target.value });
   };
+
   const editTicket = () => {
     const data = {
-      status:ticket.status,
-      userId:"Another Person",
-      remark:ticket.remark,
-      ticketId:editData.ticketId
+      status: ticket.status,
+      userId: localStorage.userId,
+      remark: ticket.remark,
+      ticketId: editData.ticketId
     }
-    editTicketyId(data)
+    editTicketyId(data,localStorage.accessToken )
       .then((res) => {
         closeEvent();
-        Swal.fire("Success", `User has been Updated Successfully`, "success");
+        Swal.fire("Success", `Ticket has been Updated Successfully`, "success");
         getTicket();
       })
       .catch((err) => {
+        closeEvent();
+        Swal.fire("Warning", `Something Went Wrong`, "warning");
         console.log(err);
       })
   };
