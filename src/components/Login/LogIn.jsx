@@ -49,7 +49,7 @@ function LogIn() {
 
   useEffect(()=>{
     if(data){
-        axios.post(`http://localhost:8000/crm/api/v1/auth/${data}`)
+        axios.post(`https://crm-backend-iukg.onrender.com/crm/api/v1/auth/${data}`)
         .then((res)=> dispatch(saveLogin(res.data)))
         .catch((err)=> console.log(err));
       }
